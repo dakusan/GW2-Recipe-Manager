@@ -1,0 +1,4 @@
+<?
+global $DSQLInfo;
+$DSQLInfo=Array('Server'=>'', 'UserName'=>'', 'Password'=>'', 'Database'=>'');
+?>

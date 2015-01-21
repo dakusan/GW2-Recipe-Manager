@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>GW2 Recipe Management Interface</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type="text/javascript" src="Scripts/jquery-1.11.2.min.js"></script>
+<script type="text/javascript" src="Scripts/Cookies.js"></script>
+<script type="text/javascript" src="ItemData.js"></script>
+<script type="text/javascript" src="ListItems.js"></script>
+<style type="text/css">
+#Loading { font-size:100px; display:none; }
+#Loading.Show { display:block; }
+.Hide { visibility:hidden; }
+.FilterTable { float:left; border:1px solid black; }
+.FilterTable td, .FilterTable th { border:1px solid black; padding:2px; border-collapse:collapse; }
+.FilterTable th { background-color:grey; text-align:left; }
+#FilterContainer { display:table; }
+#FilterButton { width:1280px; margin-top:5px; font-size:30px; }
+.ToggleAll { text-align:center; }
+.NotesParent { position:relative; }
+.Notes { position:absolute; top:20px; left:0 width:100%; font-size:13px; font-weight:normal; }
+#UserTogglesNotes { bottom:76px; top:auto; }
+#UserToggleTable td { border:0; padding:0; }
+#UserToggleTable label { padding-right:10px; }
+</style>
+</head>
+<body>
+<form action="#" id=FilterForm><div id=FilterContainer><table class=FilterTable>
+	<tr>
+		<th>
+			<input type=checkbox id=ToggleCol_OutputItem checked class=Hide>
+			Item Name:
+		</th>
+		<td><input type=text id=Filter_ItemName></td>
+	</tr><tr>
+		<th class=NotesParent>
+			<div class=Notes>Notes: Any filter left blank will be ignored, including max results.<br>The checkboxes next to each filter’s name toggles its column’s visibility.</div>
+			<input type=checkbox id=ToggleCol_Type checked>
+			Recipe Type:
+			<div class=ToggleAll>
+				<a href="#" id=CheckAll_Type_On>All On</a>
+				<a href="#" id=CheckAll_Type_Off>All Off</a>
+			</div>
+		</th>
+		<td id=FilterToggles_Type>---</td>
+	</tr><tr>
+		<th class=NotesParent>
+			<div class=Notes id=UserTogglesNotes>User toggles are toggleable filters per item and remembered via cookies for custom filtering.</div>
+			<input type=checkbox id=ToggleCol_UserToggles checked>
+			User Toggles:
+		</th>
+		<td>
+			<table id=UserToggleTable>
+				<tr id=UserToggle_OnList><td>Must be on:</td><td>
+					<label><input type=checkbox>1</label>
+					<label><input type=checkbox>2</label>
+					<label><input type=checkbox>3</label>
+					<label><input type=checkbox>4</label>
+				</td></tr>
+				<tr id=UserToggle_OffList><td>Must be off:</td><td>
+					<label><input type=checkbox>1</label>
+					<label><input type=checkbox>2</label>
+					<label><input type=checkbox>3</label>
+					<label><input type=checkbox>4</label>
+				</td></tr>
+			</table>
+			Value list: <input type=text id=UserToggleList disabled><br>
+		</td>
+	</tr>
+</table><table class=FilterTable>
+	<tr>
+		<th>
+			<input type=checkbox id=ToggleCol_Disciplines checked>
+			Disciplines:
+			<div class=ToggleAll>
+				<a href="#" id=CheckAll_Disciplines_On>All On</a>
+				<a href="#" id=CheckAll_Disciplines_Off>All Off</a>
+			</div>
+		</th>
+		<td id=FilterToggles_Disciplines>---</td>
+	</tr><tr>
+		<th>
+			<input type=checkbox id=ToggleCol_MinRating checked>
+			Minimum Rating:
+		</th>
+		<td>
+			Minimum <input type=text id=Filter_MinRating value=0><br>
+			Maximum <input type=text id=Filter_MaxRating value=500>
+		</td>
+	</tr><tr>
+		<th>
+			<input type=checkbox id=ToggleCol_Flags checked>
+			Flags:
+			<div class=ToggleAll>
+				<a href="#" id=CheckAll_Flags_On>All On</a>
+				<a href="#" id=CheckAll_Flags_Off>All Off</a>
+			</div>
+		</th>
+		<td id=FilterToggles_Flags>---</td>
+	</tr><tr>
+		<th>
+			<input type=checkbox id=ToggleCol_Rarity checked>
+			Rarity:
+			<div class=ToggleAll>
+				<a href="#" id=CheckAll_Rarity_On>All On</a>
+				<a href="#" id=CheckAll_Rarity_Off>All Off</a>
+			</div>
+		</th>
+		<td id=FilterToggles_Rarity>---</td>
+	</tr><tr>
+		<th>
+			<input type=checkbox id=ToggleCol_Level checked>
+			Level:
+		</th>
+		<td>
+			Minimum <input type=text id=Filter_MinLevel value=0><br>
+			Maximum <input type=text id=Filter_MaxLevel value=80>
+		</td>
+	</tr><tr>
+		<th>
+			<input type=checkbox id=ToggleCol_Value checked>
+			Value:
+		</th>
+		<td>
+			Minimum <input type=text id=Filter_MinValue value=0><br>
+			Maximum <input type=text id=Filter_MaxValue value="9999999">
+		</td>
+	</tr>
+</table><table class=FilterTable>
+	<tr>
+		<th>
+			<input type=checkbox id=ToggleCol_Ingredients checked>
+			Ingredients:
+		</th>
+		<td>
+			1) <input type=text id=Filter_Ingredients1><br>
+			2) <input type=text id=Filter_Ingredients2><br>
+			3) <input type=text id=Filter_Ingredients3><br>
+			4) <input type=text id=Filter_Ingredients4>
+		</td>
+	</tr><tr>
+		<th class=NotesParent>
+			<div class=Notes>Item flags work the opposite of the other checkbox lists, in that if they are checked, they are required.</div>
+			<input type=checkbox id=ToggleCol_ItemFlags>
+			Item Flags:
+			<div class=ToggleAll>
+				<a href="#" id=CheckAll_ItemFlags_On>All On</a>
+				<a href="#" id=CheckAll_ItemFlags_Off>All Off</a>
+			</div>
+		</th>
+		<td id=FilterToggles_ItemFlags>---</td>
+	</tr><tr>
+		<th>
+			<input type=checkbox id=ToggleCol_GameTypes>
+			Game Types:
+			<div class=ToggleAll>
+				<a href="#" id=CheckAll_GameTypes_On>All On</a>
+				<a href="#" id=CheckAll_GameTypes_Off>All Off</a>
+			</div>
+		</th>
+		<td id=FilterToggles_GameTypes>---</td>
+	</tr><tr>
+		<th>
+			<input type=checkbox id=ToggleCol_TimeToCraft>
+			Time To Craft (MS)
+		</th>
+	</tr><tr>
+		<th>
+			<input type=checkbox id=ToggleCol_ColNum>
+			Max Results:
+		</th>
+		<td><input type=text id=Filter_MaxResults value="100"></td>
+	</tr><tr>
+		<th>Sort:</th>
+		<td>
+			1 <select id=SortBy1><option></option></select><select id=SortBy1Dir><option value=ASC>ASC</option><option value=DESC>DESC</option></select><br>
+			2 <select id=SortBy2><option></option></select><select id=SortBy2Dir><option value=ASC>ASC</option><option value=DESC>DESC</option></select><br>
+			3 <select id=SortBy3><option></option></select><select id=SortBy3Dir><option value=ASC>ASC</option><option value=DESC>DESC</option></select><br>
+		</td>
+	</tr>
+</table></div><input type=submit value=Filter id=FilterButton></form><br>
+
+<div id=Loading>Loading...</div>
+<div id=DataTable><table border=1 cellspacing=0 cellpadding=2><tr><td></td></tr></table></div>
+
+</body>
+</html>
